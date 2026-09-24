@@ -15,17 +15,29 @@ jobs:
           distribution: temurin
           java-version: '21'
           cache: maven
-      - name: Compile native Java verifier
+      - name: Fetch sealed v3.2 adoption kit
+        run: |
+          mkdir -p adoption-conformance-kit
+          curl -fsSL -o adoption-conformance-kit/ENTITY_V3_2_ADOPTION_CLEANROOM_KIT.min.json https://raw.githubusercontent.com/blackmore-technology-group/ENTITY/ee3587a6e65c2565eaab2e815e85415ab705ea47/protocol/v3/ENTITY_V3_2_ADOPTION_CLEANROOM_KIT.min.json
+          echo '44e7a00f910c89aced3b3c1b5e9cba486809ca313e9bfb4b7bc9266095c10c14  adoption-conformance-kit/ENTITY_V3_2_ADOPTION_CLEANROOM_KIT.min.json' | sha256sum -c -
+      - name: Compile native Java verifiers
         run: mvn -q -Dstyle.color=never -DskipTests compile
-      - name: Run legacy and v3.1 campaigns
+      - name: Run legacy, v3.1 and v3.2 campaigns
         run: |
           mkdir -p evidence-ci
           mvn -q -Dstyle.color=never exec:java -Dexec.mainClass=org.btg.entity.cleanroom.Main -Dexec.args=test | tee evidence-ci/cleanroom-report.json
           grep -q '"vectors_passed" : 16' evidence-ci/cleanroom-report.json
           grep -q '879c8e1eba2549a9a1962605760b715b0fd47d3ea640fb9c6f29be5c63cfb8c5' evidence-ci/cleanroom-report.json
           grep -q '"overall_valid" : true' evidence-ci/cleanroom-report.json
+          mvn -q -Dstyle.color=never exec:java -Dexec.mainClass=org.btg.entity.cleanroom.AdoptionV32 | tee evidence-ci/adoption-v3.2-report.json
+          grep -Eq '"vectors_passed"[[:space:]]*:[[:space:]]*16' evidence-ci/adoption-v3.2-report.json
+          grep -q '1eb59e09ab08da86bfd8584df4a64ba331f7bbbce3d236b9b94f351606c90e18' evidence-ci/adoption-v3.2-report.json
+          grep -Eq '"overall_valid"[[:space:]]*:[[:space:]]*true' evidence-ci/adoption-v3.2-report.json
+          sha256sum evidence-ci/cleanroom-report.json evidence-ci/adoption-v3.2-report.json > evidence-ci/reports.sha256
+          git rev-parse HEAD > evidence-ci/commit.txt
       - name: Upload evidence
         uses: actions/upload-artifact@v4
         with:
           name: entity-java-cleanroom-evidence
-          path: evidence-ci/cleanroom-report.json
+          path: evidence-ci/
+          retention-days: 90
