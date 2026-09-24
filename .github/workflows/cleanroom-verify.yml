@@ -1,0 +1,31 @@
+name: Clean-room verification
+on:
+  push:
+    branches: [ main, 'qualification/**' ]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: Compile native Java verifier
+        run: mvn -q -Dstyle.color=never -DskipTests compile
+      - name: Run legacy and v3.1 campaigns
+        run: |
+          mkdir -p evidence-ci
+          mvn -q -Dstyle.color=never exec:java -Dexec.mainClass=org.btg.entity.cleanroom.Main -Dexec.args=test | tee evidence-ci/cleanroom-report.json
+          grep -q '"vectors_passed" : 16' evidence-ci/cleanroom-report.json
+          grep -q '879c8e1eba2549a9a1962605760b715b0fd47d3ea640fb9c6f29be5c63cfb8c5' evidence-ci/cleanroom-report.json
+          grep -q '"overall_valid" : true' evidence-ci/cleanroom-report.json
+      - name: Upload evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: entity-java-cleanroom-evidence
+          path: evidence-ci/cleanroom-report.json
