@@ -10,7 +10,7 @@ import java.util.*;
 public final class RealityV33 {
   static final ObjectMapper M=new ObjectMapper();
   static final Path KIT=Path.of("reality-conformance-kit/ENTITY_V3_3_REALITY_CLEANROOM_KIT.min.json");
-  static final String KIT_SHA="e0d6ba26baa405557bc2990e39d3022ebb8cda00ae797fab0100773cf304a6fd";
+  static final String KIT_SHA="f8b39ee01fb7346f33a57530e925b545d2bf9a770c7ec60724e28a4971d55a46";
   static final String EXPECTED="82bd1f1fb328edd37a26d8ea60ede5a599c7d9af5027bffd73b9e52843b5a51d";
   static final List<String> P=List.of("ENTITY","AUTHORITY","RIGHT","EVENT","VALUE");
   static final Set<String> STATES=Set.of("OBSERVED","ASSERTED","INFERRED","ATTESTED","EXTERNALLY_VERIFIED","ADJUDICATED","DISPUTED","REVOKED","UNKNOWN");
