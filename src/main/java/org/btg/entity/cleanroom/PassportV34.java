@@ -8,8 +8,8 @@ import java.security.MessageDigest;
 import java.util.*;
 
 public final class PassportV34 {
-  static final String KIT="passport-conformance-kit/ENTITY_V3_4_GLOBAL_PASSPORT_CLEANROOM_KIT.min.json";
-  static final String KIT_SHA="5869a3fd0ed6cb9f65bf4b20c3bd64933cad82f4aef05c5809e2e05af921f230";
+  static final String KIT="passport-conformance-kit-v341/ENTITY_V3_4_GLOBAL_PASSPORT_CLEANROOM_KIT.min.json";
+  static final String KIT_SHA="f95c2b347da97742fed3f20611f0eec2fd3df48694fed9494fb07163c537cfb7";
   static final String EXPECTED="ac7504cce70576008cff069607619660a4b9bf0cad43b3f3de81078f1e80d9ba";
   static final List<String> CORE=List.of("ENTITY","AUTHORITY","RIGHT","EVENT","VALUE");
   static final Set<String> KINDS=Set.of("GLOBAL","JURISDICTION","INDUSTRY","DOMAIN","PRIVACY","TRUST","DISCLOSURE");
