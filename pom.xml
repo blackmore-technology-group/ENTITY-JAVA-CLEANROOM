@@ -1,12 +1,40 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>org.blackmoretechnologygroup.entity</groupId>
   <artifactId>entity-java-cleanroom</artifactId>
-  <version>3.1.0</version>
+  <version>3.4.2</version>
+  <name>ENTITY Java Cleanroom</name>
+  <description>BTG-controlled ENTITY v3.4.2 Global Passport verifier and Java conformance baseline for reproducible protocol testing.</description>
+  <url>https://github.com/blackmore-technology-group/ENTITY-JAVA-CLEANROOM</url>
+
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <name>Blackmore Technology Group Limited</name>
+      <organization>Blackmore Technology Group Limited</organization>
+      <organizationUrl>https://github.com/blackmore-technology-group</organizationUrl>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:git:https://github.com/blackmore-technology-group/ENTITY-JAVA-CLEANROOM.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/blackmore-technology-group/ENTITY-JAVA-CLEANROOM.git</developerConnection>
+    <url>https://github.com/blackmore-technology-group/ENTITY-JAVA-CLEANROOM</url>
+  </scm>
+
   <properties>
     <maven.compiler.release>21</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
+
   <dependencies>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
@@ -14,7 +42,45 @@
       <version>2.21.5</version>
     </dependency>
   </dependencies>
-  <build><plugins>
-    <plugin><groupId>org.codehaus.mojo</groupId><artifactId>exec-maven-plugin</artifactId><version>3.5.0</version></plugin>
-  </plugins></build>
+
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+      <resource>
+        <directory>passport-conformance-kit-v342</directory>
+        <targetPath>passport-conformance-kit-v342</targetPath>
+        <includes>
+          <include>ENTITY_V3_4_2_GLOBAL_PASSPORT_CLEANROOM_KIT.min.json</include>
+        </includes>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.5.0</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.6.1</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals><goal>shade</goal></goals>
+            <configuration>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>org.btg.entity.cleanroom.PassportV34</mainClass>
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>
