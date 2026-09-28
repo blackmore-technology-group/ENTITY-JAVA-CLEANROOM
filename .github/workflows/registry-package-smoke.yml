@@ -1,0 +1,29 @@
+name: Registry package smoke
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: Package and execute runnable JAR
+        shell: bash
+        run: |
+          set -o pipefail
+          mvn -q -DskipTests package
+          java -jar target/entity-java-cleanroom-3.4.2.jar | tee package-output.json
+          grep -q '"vectors_passed" : 26' package-output.json || grep -q '"vectors_passed": 26' package-output.json
+          grep -q '45af773554a7191c1b49a75c636a1106afb1de36d788bb00d7af56097b8d1b0e' package-output.json
+          grep -q '"overall_valid" : true' package-output.json || grep -q '"overall_valid": true' package-output.json
+          echo 'Maven package smoke: PASS'
